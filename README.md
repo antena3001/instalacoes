@@ -20,6 +20,7 @@ UserParameter=bind.memory[*],/usr/local/bin/bind-stats.py memory -c $1
 UserParameter=bind.cache[*],/usr/local/bin/bind-stats.py cache -c $1
 
 cd /usr/local/bin/
+
 wget https://raw.githubusercontent.com/antena3001/instalacoes/master/bind-stats.py
 
 chmod +x bind-stats.py
