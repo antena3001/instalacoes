@@ -1,33 +1,33 @@
-# Zabbix Bind9 Statistics Collection
+nano /etc/bind/named.conf
+Cole:
 
-[![Join the chat at https://gitter.im/Zabbix-Bind9-Statistics-Collection/Lobby](https://badges.gitter.im/Zabbix-Bind9-Statistics-Collection/Lobby.svg)](https://gitter.im/Zabbix-Bind9-Statistics-Collection/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
-This method utilises Bind 9s built in statistics export via HTTP/XML.
-
-Most statistics available are collected, several aggregate graphs are defined.
-
-[Forked from https://github.com/Pesticles/Zabbix-Bind9-Statistics-Collection](https://github.com/Pesticles/Zabbix-Bind9-Statistics-Collection)
-
-## Requirements
-* Zabbix 2.X.X and Zabbix 3.X.X
-* Python 3
-
-
-## To install:
-* Configure Bind to export statistics via HTTP by adding the following to your bind.conf and restarting bind:
-```
 statistics-channels {
  	inet 127.0.0.1 port 8653 allow { 127.0.0.1; };
 };
-```
-* Copy the userparameter_bind.conf into your zabbix agents include directory (/etc/zabbix/zabbix_agentd.d/ on
-Debian/Ubuntu)
-* Copy the script bind-stats.py to /usr/local/bin/ (or anywhere else you like, but you will need to alter the
-contents of
-userparameter_bind.conf)
-* Import the xml template into Zabbix (zbx_bind_statistics_template_v3.xml for Zabbix 3.X.X)
 
-## Note:
+nano /etc/zabbix/zabbix_agentd.conf
 
-You can enable per-zone statistics (which will be automatically discovered) by adding the following clause to each zone definition in your bind.conf:
-`zone-statistics yes;`
+Cole:
+UserParameter=bind.discoverzones,/usr/local/bin/bind-stats.py discoverzones
+UserParameter=bind.counter[*],/usr/local/bin/bind-stats.py counter -c $1
+UserParameter=bind.zonecounter[*],/usr/local/bin/bind-stats.py zonecounter -z $1 -c $2
+UserParameter=bind.zonemaintenancecounter[*],/usr/local/bin/bind-stats.py zonemaintenancecounter -c $1
+UserParameter=bind.resolvercounter[*],/usr/local/bin/bind-stats.py resolvercounter -c $1
+UserParameter=bind.socketcounter[*],/usr/local/bin/bind-stats.py socketcounter -c $1
+UserParameter=bind.incounter[*],/usr/local/bin/bind-stats.py incounter -c $1
+UserParameter=bind.outcounter[*],/usr/local/bin/bind-stats.py outcounter -c $1
+UserParameter=bind.memory[*],/usr/local/bin/bind-stats.py memory -c $1
+UserParameter=bind.cache[*],/usr/local/bin/bind-stats.py cache -c $1
+
+cd /usr/local/bin/
+wget https://raw.githubusercontent.com/antena3001/instalacoes/master/bind-stats.py
+
+chmod +x bind-stats.py
+
+nano /etc/sudoers
+zabbix ALL=(ALL) NOPASSWD: ALL
+
+/etc/init.d/bind9 restart
+/etc/init.d/zabbix-agent restart
+
+importar temaplate.
